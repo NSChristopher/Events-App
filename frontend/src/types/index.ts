@@ -5,15 +5,41 @@ export interface User {
   createdAt?: string;
 }
 
-export interface Post {
+export interface Event {
   id: number;
   title: string;
-  content?: string;
-  published: boolean;
-  authorId: number;
-  author: User;
+  description?: string;
+  location?: string;
+  eventDate: string;
+  creatorId: number;
+  creator: User;
   createdAt: string;
   updatedAt: string;
+  invitations?: Invitation[];
+  rsvps?: Rsvp[];
+  attendeeCount?: number;
+}
+
+export interface Invitation {
+  id: number;
+  eventId: number;
+  inviterId: number;
+  inviteeId: number;
+  status: 'pending' | 'accepted' | 'declined';
+  event?: Event;
+  inviter?: User;
+  invitee?: User;
+  sentAt: string;
+}
+
+export interface Rsvp {
+  id: number;
+  eventId: number;
+  userId: number;
+  response: 'attending' | 'not_attending' | 'maybe';
+  event?: Event;
+  user?: User;
+  respondedAt: string;
 }
 
 export interface AuthResponse {
@@ -21,14 +47,26 @@ export interface AuthResponse {
   user: User;
 }
 
-export interface CreatePostData {
+export interface CreateEventData {
   title: string;
-  content?: string;
-  published?: boolean;
+  description?: string;
+  location?: string;
+  eventDate: string;
 }
 
-export interface UpdatePostData {
+export interface UpdateEventData {
   title?: string;
-  content?: string;
-  published?: boolean;
+  description?: string;
+  location?: string;
+  eventDate?: string;
+}
+
+export interface InviteUserData {
+  eventId: number;
+  inviteeId: number;
+}
+
+export interface RsvpData {
+  eventId: number;
+  response: 'attending' | 'not_attending' | 'maybe';
 }
