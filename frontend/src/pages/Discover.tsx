@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/hooks/useAuth';
 import { useEvents } from '@/hooks/useEvents';
 import { useInvitations } from '@/hooks/useInvitations';
-import { Event } from '@/types';
 import { Calendar, MapPin, Users, ArrowLeft, UserPlus, Check, X, Heart } from 'lucide-react';
 
 const Discover = () => {

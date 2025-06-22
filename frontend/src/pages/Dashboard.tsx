@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/hooks/useAuth';
 import { useEvents } from '@/hooks/useEvents';
 import { Event } from '@/types';
-import { Plus, Edit, Trash2, LogOut, User, Calendar, MapPin, Users } from 'lucide-react';
+import { Plus, Edit, Trash2, LogOut, User, Calendar, MapPin, Users, UserPlus } from 'lucide-react';
+import InviteUsersModal from '@/components/InviteUsersModal';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -15,6 +16,8 @@ const Dashboard = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [viewMode, setViewMode] = useState<'my-events' | 'all-events'>('my-events');
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [selectedEventForInvite, setSelectedEventForInvite] = useState<Event | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -81,6 +84,16 @@ const Dashboard = () => {
         // Error handled in hooks
       }
     }
+  };
+
+  const handleInviteUsers = (event: Event) => {
+    setSelectedEventForInvite(event);
+    setInviteModalOpen(true);
+  };
+
+  const handleCloseInviteModal = () => {
+    setInviteModalOpen(false);
+    setSelectedEventForInvite(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -307,6 +320,14 @@ const Dashboard = () => {
                         <Button
                           variant="outline"
                           size="sm"
+                          onClick={() => handleInviteUsers(event)}
+                          className="border-green-300 text-green-600 hover:bg-green-50"
+                        >
+                          <UserPlus className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => handleEdit(event)}
                           className="border-blue-300 text-blue-600 hover:bg-blue-50"
                         >
@@ -334,6 +355,16 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+
+      {/* Invite Users Modal */}
+      {selectedEventForInvite && (
+        <InviteUsersModal
+          eventId={selectedEventForInvite.id}
+          eventTitle={selectedEventForInvite.title}
+          isOpen={inviteModalOpen}
+          onClose={handleCloseInviteModal}
+        />
+      )}
     </div>
   );
 };
