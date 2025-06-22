@@ -11,22 +11,54 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts     Post[]
+  id              Int          @id @default(autoincrement())
+  email           String       @unique
+  username        String       @unique
+  password        String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  events          Event[]      @relation("EventCreator")
+  sentInvitations Invitation[] @relation("InvitationSender") 
+  receivedInvitations Invitation[] @relation("InvitationReceiver")
+  rsvps           Rsvp[]
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Event {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String?
+  location    String?
+  eventDate   DateTime
+  creatorId   Int
+  creator     User         @relation("EventCreator", fields: [creatorId], references: [id])
+  invitations Invitation[]
+  rsvps       Rsvp[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Invitation {
+  id         Int      @id @default(autoincrement())
+  eventId    Int
+  inviterId  Int
+  inviteeId  Int
+  status     String   @default("pending") // pending, accepted, declined
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  inviter    User     @relation("InvitationSender", fields: [inviterId], references: [id])
+  invitee    User     @relation("InvitationReceiver", fields: [inviteeId], references: [id])
+  sentAt     DateTime @default(now())
+  
+  @@unique([eventId, inviteeId])
+}
+
+model Rsvp {
+  id          Int      @id @default(autoincrement())
+  eventId     Int
+  userId      Int
+  response    String   // attending, not_attending, maybe
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id])
+  respondedAt DateTime @default(now())
+  
+  @@unique([eventId, userId])
 }
